@@ -75,3 +75,15 @@ up gu:
 #a1 :=analyze1
 #a1 :
 #
+
+goDST:=goDST/analyze_h8prog01.go.run
+goDSTdir:=$(shell dirname $(goDST))
+goSRC:=goSRC/analyze_h8prog01.src.go
+
+$(goDST) : $(goSRC) 
+	@echo
+	[ -d $(goDSTdir) ] || mkdir $(goDSTdir)
+	touch $@
+	@echo
+aaa : $(goDST)
+	$(foreach aa1,$(anaSET0),$(EOL)$^ $(aa1))
