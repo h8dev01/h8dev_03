@@ -34,6 +34,17 @@ up gu:
 
 anaSETno:=0
 
+define anaTP3
+
+
+endef
+
+define anaTP2
+$(eval anaSETlast:=$$(shell echo -n $$$$(($$(1)-1))))
+$(eval anaList$(1) += $(anaSET$(1)))
+$(eval anaList$(1) += $(anaSETlast))
+endef
+
 define anaTP1
 $(iinfo --$(1)==)
 $$(eval anaSETno:=$$(shell echo -n $$$$(($$(anaSETno)+1))))
@@ -48,7 +59,7 @@ $$(eval anaSET5:=dst/dstBIN.$$(anaSETno).$$(anaSET1).bin)
 $$(eval anaSET6:=dst/dstLST.$$(anaSETno).$$(anaSET1).lst)
 $$(eval anaSET7:=dst/dstHEX.$$(anaSETno).$$(anaSET1).binhex.txt)
 
-$(foreach aa2,1 2 3 4 5 6 7,$(eval anaList$(aa2) += $$(anaSET$(aa2))))
+$(foreach aa2,1 2 3 4 5 6 7, $(eval $(call anaTP2,$(aa2))))
 
 
 endef
