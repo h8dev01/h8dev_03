@@ -87,3 +87,17 @@ $(goDST) : $(goSRC)
 	@echo
 aaa : $(goDST)
 	$(foreach aa1,$(anaSET0),$(EOL)$^ $(aa1))
+
+h1:=show_target_option
+h1:
+	$(gcc) --target-help
+
+define help_text
+ $(foreach aa1,h1,$(aa1)    : $($(aa1)) $(EOL))
+
+endef
+export help_text
+
+sh show_help :
+	@echo
+	@echo "$${help_text}"
