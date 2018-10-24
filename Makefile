@@ -86,7 +86,7 @@ $(goDST) : $(goSRC)
 	[ -d $(goDSTdir) ] || mkdir $(goDSTdir)
 	touch $@
 	@echo
-aaa : $(goDST)
+ggg : $(goDST)
 	$(foreach aa1,$(anaSET0),$(EOL)$^ $(aa1))
 
 h1:=show_target_option
@@ -102,3 +102,23 @@ export help_text
 sh show_help :
 	@echo
 	@echo "$${help_text}"
+
+start_up_files_Name:=h8300hCrt0.S  h8300hnelf.x
+start_up_files_SRCdir:=../h8dev_02
+start_up_files_DSTdir:=startUP
+define copy_start_up_file
+$(start_up_files_DSTdir)/$1 : $(start_up_files_SRCdir)/$1
+	[ -d $(start_up_files_DSTdir) ] || mkdir $(start_up_files_DSTdir)
+	cat $$^ > $$@
+$(info $(start_up_files_DSTdir)/$1 :$(start_up_files_SRCdir)/$1 )
+
+endef
+$(foreach aa1,$(start_up_files_Name),$(if $(wildcard $(start_up_files_SRCdir)/$(aa1)),$(eval $(call copy_start_up_file,$(aa1))),\
+	$(info )$(info "file $(start_up_files_SRCdir)/$(aa1) don NOT exist.")$(error )))
+
+start_up_files_OBJs:=$(foreach aa1,$(start_up_files_Name),$(start_up_files_DSTdir)/$(aa1))
+stu : $(start_up_files_OBJs)
+	@echo
+	@ls -l $^
+	@echo
+
