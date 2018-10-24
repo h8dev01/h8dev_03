@@ -3,7 +3,8 @@ define EOL
 
 
 endef
-all:
+
+all: show_help 
 
 ## modify the following file to set the analyze file set.
 include Makefile.env
