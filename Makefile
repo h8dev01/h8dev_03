@@ -4,6 +4,23 @@ define EOL
 
 endef
 
+TOOL_PREFIX =   /home/bootH/bin/h8300-elf-
+start_up_files_SRCdir:=../h8dev_02
+
+LDSCRIPT    =   h8300hnelf.x
+CRT0        =   h8300hCrt0.S
+
+start_up_files_DSTdir:=./startUP
+start_up_files_Name:=$(LDSCRIPT) $(CRT0)
+
+
+gcc         =   $(TOOL_PREFIX)gcc
+as          =   $(TOOL_PREFIX)as
+ld          =   $(TOOL_PREFIX)ld
+objdump     =   $(TOOL_PREFIX)objdump
+objcopy     =   $(TOOL_PREFIX)objcopy
+
+
 all: show_help 
 
 ## modify the following file to set the analyze file set.
@@ -91,10 +108,22 @@ ggg : $(goDST)
 
 h1:=show_target_option
 h1:
-	$(gcc) --target-help
+	echo ; $(gcc) --target-help  | sed -e '/^$$/,$$ d'
 
+h2:=show_obj_format
+h2:
+	echo ; $(objdump) -i
+
+
+t1s:m8hSRC/test01.c
+
+t1s:=gcc_build_asm
+t1s:
+	echo; mkdir -p out__$@ ; $(gcc) $^ -o out__$@/$@_$(shell basename $<).s
+
+help_List:=h1 h2 t1s
 define help_text
- $(foreach aa1,h1,$(aa1)    : $($(aa1)) $(EOL))
+ $(foreach aa1,$(help_List),$(aa1)    : $($(aa1)) $(EOL))
 
 endef
 export help_text
@@ -103,14 +132,11 @@ sh show_help :
 	@echo
 	@echo "$${help_text}"
 
-start_up_files_Name:=h8300hCrt0.S  h8300hnelf.x
-start_up_files_SRCdir:=../h8dev_02
-start_up_files_DSTdir:=startUP
 define copy_start_up_file
 $(start_up_files_DSTdir)/$1 : $(start_up_files_SRCdir)/$1
 	[ -d $(start_up_files_DSTdir) ] || mkdir $(start_up_files_DSTdir)
 	cat $$^ > $$@
-$(info $(start_up_files_DSTdir)/$1 :$(start_up_files_SRCdir)/$1 )
+$(iinfo $(start_up_files_DSTdir)/$1 :$(start_up_files_SRCdir)/$1 )
 
 endef
 $(foreach aa1,$(start_up_files_Name),$(if $(wildcard $(start_up_files_SRCdir)/$(aa1)),$(eval $(call copy_start_up_file,$(aa1))),\
