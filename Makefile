@@ -117,7 +117,7 @@ h2:=show_obj_format
 h2:
 	echo ; $(objdump) -i
 
-t1_List:=t1s t1b1 t1b2
+t1_List:=t1s t1b1 t1b2 vt1
 $(t1_List) : m8hSRC/test01.c
 
 t1s:=gcc_build_asm
@@ -136,6 +136,12 @@ t1b1:
 		out__$@/$@_$(shell basename $<).bin \
 		|hexdump -C -v > \
 		out__$@/$@_$(shell basename $<).bin.hex.txt 
+
+vt1:=vim_the_src_file
+vt1:
+	@echo 
+	vim $<
+	@echo 
 
 
 t1b2:=gcc_build_bin_with_para01
