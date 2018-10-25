@@ -20,6 +20,9 @@ ld          =   $(TOOL_PREFIX)ld
 objdump     =   $(TOOL_PREFIX)objdump
 objcopy     =   $(TOOL_PREFIX)objcopy
 
+cPara01:= -O3 -mh -g -mrelax -mint32 -DH8_3664 -nostdlib \
+	-T $(start_up_files_DSTdir)/$(LDSCRIPT)  \
+	$(start_up_files_DSTdir)/$(CRT0)  
 
 all: show_help 
 
@@ -114,14 +117,40 @@ h2:=show_obj_format
 h2:
 	echo ; $(objdump) -i
 
-
-t1s:m8hSRC/test01.c
+t1_List:=t1s t1b1 t1b2
+$(t1_List) : m8hSRC/test01.c
 
 t1s:=gcc_build_asm
 t1s:
-	echo; mkdir -p out__$@ ; $(gcc) $^ -o out__$@/$@_$(shell basename $<).s
+	echo; mkdir -p out__$@ ; $(gcc) $^ -S -o \
+		out__$@/$@_$(shell basename $<).s
 
-help_List:=h1 h2 t1s
+t1b1:=gcc_build_bin_without_para
+t1b1:
+	echo; mkdir -p out__$@ ; $(gcc)               $^    \
+		-o out__$@/$@_$(shell basename $<).exe
+	$(objcopy) -O binary \
+		out__$@/$@_$(shell basename $<).exe \
+		out__$@/$@_$(shell basename $<).bin
+	cat \
+		out__$@/$@_$(shell basename $<).bin \
+		|hexdump -C -v > \
+		out__$@/$@_$(shell basename $<).bin.hex.txt 
+
+
+t1b2:=gcc_build_bin_with_para01
+t1b2:
+	echo; mkdir -p out__$@ ; $(gcc) $(cPara01)    $^    \
+		-o out__$@/$@_$(shell basename $<).exe
+	$(objcopy) -O binary \
+		out__$@/$@_$(shell basename $<).exe \
+		out__$@/$@_$(shell basename $<).bin
+	cat \
+		out__$@/$@_$(shell basename $<).bin \
+		|hexdump -C -v > \
+		out__$@/$@_$(shell basename $<).bin.hex.txt 
+
+help_List:=h1 h2 $(t1_List)
 define help_text
  $(foreach aa1,$(help_List),$(aa1)    : $($(aa1)) $(EOL))
 
